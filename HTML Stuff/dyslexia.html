@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dyslexia</title>
+	<style>
+		* {
+			font-family: "Lucinda Sans", sans-serif;
+		}
+
+		body {
+			background: black;
+		}
+
+		#dyslexia {
+			position: absolute;
+			margin: auto;
+			padding: 20px;
+			width: 1000px;
+			height: 400px;
+			outline: 2px solid black;
+			font-size: 30px;
+			color: white;
+			background: black;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	</style>
+</head>
+<body>
+	<p id="dyslexia">This is the way a friend described the experience of being dyslexic to me. She said that it was an inability to link the English lexicon with the phonetic elements that make up speech. She described this inability being caused by letters jumbling and moving as she attempted to interpret them. Out of a combination of boredom and upon remembering this conversation, I decided to make this to simulate my interpretation of dyslexia as it was described to me.</p>
+	<script>
+		setInterval(function () {
+			let array = dyslexia.textContent.split(" ");
+			let newTextContentArray = wordMixer(array);
+			dyslexia.textContent = newTextContentArray.join(" ");
+		},300);
+
+		function wordMixer (array) {
+			let a = [];
+
+			for (word in array) {
+				var word = array[word];
+				let int = Math.random();
+				if (int > 0.3) {
+					let index = Math.round(Math.random() * (word.length-1));
+					let swap = index > 0 ? index-1 : 1;
+
+					word = swapStr(word, index, swap);
+				}
+				a.push(word);
+			}
+
+			return a;
+		};
+
+		function swapStr (str, first, last) {
+			if (first == last || str.length < 2) { return str; }
+
+			if (first > last) { 
+				let t = first;
+				first = last;
+				last = t;
+			}
+
+			return str.substring(0,first) + str[last] + str.substring(first+1, last) + str[first] + str.substring(last+1);
+		}
+	</script>
+</body>
+</html>

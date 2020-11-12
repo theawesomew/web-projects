@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>My Guessing Game</title>
+    </head>
+    <body>
+        <button onclick="Start();">Start</button><br/>
+        <form>
+            <input type="text" id="guess" width="500" height="20"/>
+            <input type="button" value="Submit" onclick="CheckGuess()"/>
+        </form>
+        <p id="display"></p>
+        <p id="guesses"></p>
+        <script>
+            var theNumber, NOG, response, Highest, Lowest;
+            var Comments = ["Your Parents Would Be Ashamed", "Oh Man, The Amount of Stupidity Must Have Doubled", "Me Watching You Guess Was Just Saddening", "Freaking Hell You, You Absolute Knob Head", "I Don't Know What You're Looking So Confident About Mate, Your A Freaking Moron"];
+            var guessList = [];
+            
+            function Start(){
+                theNumber = Math.round(Math.random() * 100);
+                NOG = 7;
+                document.getElementById("guesses").innerHTML = "Guesses Left: " + NOG;
+                response = Comments[Math.round(Math.random() * Comments.length - 1)];
+                document.getElementById("display").innerHTML = "";
+                document.getElementById("guess").value = "";
+            }
+            function CheckGuess(){
+                var guess = Number(document.getElementById("guess").value);
+                guessList.push(Number(document.getElementById("guess").value));
+
+                
+                if(NOG !== 0){
+                    if(guess < theNumber){
+                        NOG--;
+                        document.getElementById("display").innerHTML = "Too Low";
+                        document.getElementById("guesses").innerHTML = "Guesses Left: " + NOG;
+                    }
+                    if(guess > theNumber){
+                        NOG--;
+                        document.getElementById("display").innerHTML = "Too High";
+                        document.getElementById("guesses").innerHTML = "Guesses Left: " + NOG;
+                    }
+                    if(guess == theNumber){
+                        guessList.sort(function(a, b){
+                            return a-b;
+                        });
+                        document.getElementById("display").innerHTML = "Correct, " + "<br/> Your Highest Guess Was: " + guessList[7 - NOG] + "<br/> Your Lowest Guess Was: " + guessList[0];
+                        document.getElementById("guesses").innerHTML = "Guesses Left: " + NOG;
+                        theNumber = Math.round(Math.random() * 100);
+                        guessList = [];
+                    }
+                    if(guess == 0){
+                        NOG = NOG + 1;
+                        document.getElementById("display").innerHTML = "Y0U D1DN'T GUE$$ A NUMB3R";
+                    }
+                } else {
+                    if(response == undefined){
+                        response = "Your Parents Would Be Ashamed";
+                    }
+                    guessList.sort(function(a, b){
+                        return a-b;
+                    });
+                    document.getElementById("display").innerHTML = response + "<br/> Your Highest Guess Was: " + guessList[7] + "<br/> Your Lowest Guess Was: " + guessList[0];
+                    guessList = [];
+                    document.getElementById("guess").value = "";
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<h1 id="number"></h1>
+	<script>
+		function isPrime (n) {
+			for (var i = 2; i < n; i++) {
+				if (n % i == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		function reverseString (str) {
+			return str.split("").reverse().join("");
+		}
+
+		let inversePrimes = [];
+		for (var i = 11; i <= 99; i += 2) {
+			if (isPrime(i)) {
+				var noString = i.toString();
+				if (noString[0] != "5" && Number(noString[0]) % 2 != 0) {
+					if (Number(noString[0]) <= Number(noString[noString.length-1])){
+						var rString = reverseString(noString);
+						if (isPrime(Number(rString))) {
+							inversePrimes.push(i);
+							number.textContent = noString;
+						}
+					}
+				}
+			}
+		}
+		console.log(count);
+	</script>
+</body>
+</html>

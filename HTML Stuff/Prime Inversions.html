@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script>
+		function isPrime (n) {
+			for (var i = 2; i < n; i++) {
+				if (n % i == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		function reverseString (str) {
+			return str.split("").reverse().join("");
+		}
+
+		let count = 0;
+		for (var i = 11; i <= 9999999; i += 2) {
+			if (isPrime(i)) {
+				var noString = i.toString();
+				if (noString[0] != "5" && Number(noString[0]) % 2 != 0) {
+					if (Number(noString[0]) <= Number(noString[noString.length-1])){
+						var rString = reverseString(noString);
+						if (isPrime(Number(rString))) {
+							console.log(noString, rString);
+							count++;				
+						}
+					}
+				}
+			}
+		}
+		console.log(count);
+	</script>
+</body>
+</html>

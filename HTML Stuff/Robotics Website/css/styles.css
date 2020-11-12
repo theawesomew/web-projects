@@ -1,0 +1,87 @@
+/* Keyframes */
+
+
+/* General styling */
+
+* {
+	color: #888;
+	margin: 0;
+	font-family: Helvetica, sans-serif;
+}
+
+a {
+	text-decoration: none;
+}
+
+/* Navigational bar */
+
+#nav {
+	background-color: white;
+	width: 100vw;
+	height: 50px;
+	display: inline-block;
+	border-bottom: 1px solid lightgrey;
+	position: fixed;
+	z-index: 2;
+}
+
+#nav .menu {
+	width: 83.33%;
+	margin: 0px auto 0px auto;
+}
+
+#nav .menu ul {
+	list-style-type: none;
+}
+
+#nav .menu ul li {
+	float: right;
+	padding: 17px 20px 15px 20px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+#nav .menu ul .name {
+	float: left;
+	font-size: 16px;
+	letter-spacing: 3px;
+	line-height: 100%;
+}
+
+/* Front page below the nav */
+
+#hero {
+	width: 100vw;
+	height: 100vh;
+	background-color: cornflowerblue;
+}
+
+.title {
+	position: absolute;
+	text-transform: uppercase;
+	font-size: 64px;
+	top: 40%;
+	margin: auto;
+	width: 100vw;
+	text-align: center;
+}
+
+.title h2 {
+	color: white;
+	text-shadow: 5px 5px 1px rgba(0,0,0,0.5);
+	z-index: 1;
+}
+
+a svg {
+	opacity: 0.2;
+	position: absolute;
+	margin: 0px auto 0px auto;
+	left: 0;
+	right: 0;
+	bottom: 20px;
+	transition: opacity 2s;
+}
+
+a svg:hover {
+	opacity: 1;
+}

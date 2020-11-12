@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Big Two AI</title>
+</head>
+<body>
+	<script>
+		var RANK_ORDER = '34567890JQKA2', SUIT_ORDER = 'DCHS', deck = [],
+		hands = [], play = [];
+
+
+		function createDeck () {
+			for (var i = 0; i < RANK_ORDER.length; i++) {
+				for (var j = 0; j < SUIT_ORDER.length; j++) {
+					deck.push(RANK_ORDER[i] + SUIT_ORDER[j]);
+				}
+			}
+		}
+
+
+		function createHands () {
+			fake_deck = deck.slice();
+			for (var i = 0; i < 4; i++) {
+				hands.push([]);
+				for (var j = 0; j < 13; j++) {
+					var c = Math.round(Math.random() * (fake_deck.length-1))
+					hands[i].push(fake_deck[c]);
+					fake_deck.splice(c,1);
+				}
+			}
+		}
+
+		function isHigher (a,b) {
+			if(RANK_ORDER.indexOf(a[0]) > RANK_ORDER.indexOf(b[0])) {
+				return true;
+			} else if (RANK_ORDER.indexOf(a[0]) < RANK_ORDER.indexOf(b[0])) {
+				return false;
+			} else {
+				if (SUIT_ORDER.indexOf(a[1]) > SUIT_ORDER.indexOf(b[1])) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		function swap (arr, a, b) {
+			var c = arr[a];
+			arr[a] = arr[b];
+			arr[b] = c;
+			return arr;
+		}
+
+		function sortCards (cards) {
+			for (var i = 0; i < (cards.length-1); i++) {
+				for (var j = 0; j < (cards.length-i-1); j++) {
+					if (isHigher(cards[j], cards[j+1])) {
+						swap(cards, j, j+1);
+					}
+				}
+			}
+
+			return cards;
+		}
+
+		function getValidPlays (a, cards) {
+			var valid_moves = [];
+
+			for (var i = 0; i < cards.length; i++) {
+				if (isHigher(cards[i], a)) {
+					valid_moves.push(cards[i])
+				}
+			}
+
+			return valid_moves;
+		}
+
+		function play (hand, is_start_of_round, play_to_beat, round_history, player_no, hand_size, scores, round_number) {
+			hand = sortCards(hand);
+			deck = createDeck();
+		}
+
+		createDeck();
+		createHands();
+		sortCards(hands[0]);
+		console.log(getValidPlays('3D', hands[0]));
+	</script>
+</body>
+</html>

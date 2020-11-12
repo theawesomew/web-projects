@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Asteroids</title>
+
+	<script src="js/point.js"></script>
+	<script src="js/bullet.js"></script>
+	<script src="js/canvas.js"></script>
+	<script src="js/input.js"></script>
+	<script src="js/asteroid.js"></script>
+	<script src="js/ship.js"></script>
+</head>
+<body>
+<script>
+	var AsteroidSize = 8, canvas, input, bullets, asteroids, ship, lvl, lives;
+	
+	function main () {
+		canvas = new Canvas(500, 500);
+		input = new InputHandeler();
+		bullets = [];
+		asteroids = [];
+
+		init();
+		run();
+	}
+
+	function init () {
+		lvl = 0;
+		lives = 3;
+
+		for (var i = 0; i < 3; i++) {
+			var n = Math.round(Math.random() * (Points.ASTEROIDS.length - 1));
+
+			var x = 0, y = 0;
+
+			if(Math.random() > 0.5) {
+				x = Math.random() * 500;
+			} else {
+				y = Math.random() * 500;
+			}
+
+			var astr = new Asteroid(Points.ASTEROIDS[n], AsteroidSize, x, y);
+			astr.MaxX = 500;
+			astr.MaxY = 500;
+
+			asteroids.push(astr);
+		}
+
+		ship = new Ship(Points.SHIP, 500/2, 500/2);
+		ship.scale(2);
+	}
+
+	function generateLvl () {
+		lvl = 0;
+		lives = 3;
+
+		var num = Math.round(10 * Math.atan(lvl/25)) + 3;
+
+		for (var i = 0; i < num; i++) {
+			var n = Math.round(Math.random() * (Points.ASTEROIDS.length - 1));
+
+			var x = 0, y = 0;
+
+			if(Math.random() > 0.5) {
+				x = Math.random() * 500;
+			} else {
+				y = Math.random() * 500;
+			}
+
+			var astr = new Asteroid(Points.ASTEROIDS[n], AsteroidSize, x, y);
+			astr.MaxX = 500;
+			astr.MaxY = 500;
+
+			asteroids.push(astr);
+		}
+	}
+
+	function run () {
+		var rf = (function (){
+			return window.requestAnimationFrame ||
+				   window.mozRequestAnimationFrame ||
+				   window.oRequestAnimationFrame ||
+				   window.msRequestAnimationFrame ||
+				   window.webkitRequestAnimationFrame ||
+
+			   		function (cb, el) {
+			   			window.setTimeout(cb, 1000/60);
+			   		}
+		})();
+
+		var loop = function () {
+			update();
+			render();
+
+			rf(loop, canvas)
+		}
+		rf(loop, canvas);	
+	}
+
+
+	function update () {
+		if (lives === 0) {
+			asteroids = [];
+			generateLvl();
+		}
+
+		for (var i = 0, len = asteroids.length; i < len; i++) {
+			var a = asteroids[i];
+			a.update();
+
+			if (ship.collide(a)) {
+				ship.x = 250;
+				ship.y = 250;
+
+				ship.vel = {
+					x: 0,
+					y: 0
+				}
+
+				lives--;
+			}
+
+			for (var j = 0, len2 = this.bullets.length; j < len2; j++) {
+				var b = bullets[j];
+
+				if (a.hasPoint(b.x, b.y)) {
+					bullets.splice(j, 1);
+					len2--;
+					j--;
+
+					if (a.size > AsteroidSize/4) {
+						for (var k = 0; k < 2; k++) {
+							var n = Math.round(Math.random() * (Points.ASTEROIDS.length - 1));
+
+							var astr = new Asteroid(Points.ASTEROIDS[n], a.size/2, a.x, a.y);
+							astr.MaxX  = 500;
+							astr.MaxY  = 500;
+
+							asteroids.push(astr);
+							len++;
+						}
+					}
+					asteroids.splice(i, 1);
+					len--;
+					i--;
+
+					if (len === 0) {
+						lvl++;
+						generateLvl();
+					}
+				}
+			}
+		}
+
+		ship.update();
+
+		if (input.isDown(37)) {
+			ship.rotate(-0.06);
+		} else if (input.isDown(39)) {
+			ship.rotate(0.06);
+		} else {
+			ship.rotate(0);
+		}
+
+		if (input.isDown(38)) {
+			ship.addVel();
+		}
+
+		if (input.isPressed(32)) {
+			bullets.push(ship.shoot());
+		}
+
+		for (var i = bullets.length; i--;) {
+			var b = bullets[i];
+			b.update();
+		}
+	}
+
+	function render () {
+		canvas.clear();
+
+		canvas.ctx.strokeStyle = "#fff";
+
+		for (var i = bullets.length; i--;) {
+			bullets[i].render(canvas.ctx);
+		}
+
+
+		for (var i = 0, len = asteroids.length; i < len; i++) {
+			canvas.drawPolygon(asteroids[i], asteroids[i].x, asteroids[i].y);
+		}
+
+		if (ship.visible) {
+			canvas.drawPolygon(ship, ship.x, ship.y);
+		}
+	}
+
+	main();
+</script>
+</body>
+</html>

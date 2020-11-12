@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script>
+		function stable (int) {
+			var n = int.toString();
+
+			for (var i = 0; i < n.length; i++) {
+				if (n[i] == (i+1)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		var count = 0;
+		for (var i = 100; i < 1000; i++) {
+			if (stable(i)) {
+				count++;
+			}
+		}
+		console.log(count);
+	</script>
+</body>
+</html>

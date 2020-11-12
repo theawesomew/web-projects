@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Polygon</title>
+    <style>
+        canvas {
+            background: black;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let canvas = document.createElement("canvas");
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        let ctx = canvas.getContext("2d");
+        document.body.appendChild(canvas);
+
+        class Polygon {
+            constructor (points) {
+                this.p = points.splice(0);
+                this.s = 1;
+            }
+
+            draw (ctx, x, y) {
+                ctx.beginPath();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "white";
+                ctx.moveTo(this.p[0] + x, this.p[1] + y);
+                for (let i = 2; i < this.p.length; i += 2) {
+                    ctx.lineTo(this.p[i] + x, this.p[i+1] + y);
+                }
+                ctx.stroke();
+            }
+
+            scale (s) {
+                this.s = s;
+                this.p = this.p.map(x => x * s);
+            }
+
+            recentre (x,y) {
+                for (let i = 0; i < this.p.length; i += 2) {
+                    this.p[i] = this.p[i] - this.s * x;
+                    this.p[i + 1] = this.p[i + 1] - this.s * y;
+                }
+            }
+
+            rotate (theta, centre) {
+                let c = Math.cos(theta);
+                let s = Math.sin(theta);
+
+                this.recentre(centre.x, centre.y);
+
+                for (let i = 0; i < this.p.length; i += 2) {
+                    let x = this.p[i];
+                    let y = this.p[i+1];
+                    this.p[i] = x * c - y * s;
+                    this.p[i+1] = x * s + y * c;
+                }
+
+                this.recentre(-centre.x, -centre.y);
+            }
+        }
+
+        let sqrt2inv = 1/Math.sqrt(2);
+        let poly = new Polygon([0, 0, 0, 1, sqrt2inv, 1 + sqrt2inv, 1 + sqrt2inv, 1 + sqrt2inv, 1 + 2*sqrt2inv, 1, 1 + 2*sqrt2inv, 0, 1 + sqrt2inv, -sqrt2inv, sqrt2inv, -sqrt2inv, 0, 0]);
+        poly.scale(100);
+        let centre = {x: 0, y: 0};
+        function draw () {
+            ctx.clearRect(0,0,width,height);
+            poly.rotate(Math.PI/120, centre);
+            poly.draw(ctx, width / 2 - 100 * centre.x, height / 2 - 100 * centre.y);
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(-100 * centre.x + width/2, -100 * centre.y + height/2 - 50, 10, 0, 2*Math.PI);
+            ctx.fill();
+        }
+
+        setInterval(function (){
+            draw();
+        },1000/60);
+    </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title>William Kennedy</title>
+	<meta charset="UTF-8"/>
+	<!-- Adjustsments for mobile phones -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale = 1"/>
+	<!-- Main CSS File -->
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<!-- Webapge Icon -->
+	<link rel="icon" type="image/png" href="images/graphics/logo.png"/>
+</head>
+<body>
+	<div id="nav">
+		<!-- Navigational Bar -->
+    <div class="menu">
+		  <ul>
+			 <li class="name"><a href="index.html">William Kennedy</a></li>
+			 <li><a href="contact.html">Contact</a></li>
+			 <li><a href="blog.html">Blog</a></li>
+			 <li><a href="experiment.html">Experiments</a></li>
+			 <li><a href="about.html">About</a></li>
+		  </ul>
+    </div>
+	</div>
+	<div id="hero">
+		<!-- Large Text In the Centre -->
+		<div class="text">
+			<p class="bigText">William Kennedy</p>
+			<span class="roll-text">
+				<span class><h2>Web Developer</h2></span>
+			</span>
+		</div>
+	</div>
+  <script>(function(){function e(){a=(a+1)%c.length;b.className="hide";setTimeout(d,1E3)}function d(){b.innerHTML=c[a];b.className="";setTimeout(e,3E3)}document.querySelector(".roll-text");var b=document.querySelector(".roll-text span"),c="<h2>Game developer</h2>;<h2>Web designer</h2>;<h2>Web Developer</h2>;<h2>Australian</h2>;<h2>Student</h2>".split(";"),a=0;d()})();</script>
+  <!-- Svg Canvas Link that Sends Users Down To The #experiements Page -->
+	<a data-scroll="true" data-options='{"offset": 50}' href="#experiments">
+    	<svg height="50" width="50">
+    		<g fill="none" stroke="white" stroke-linecap="round" stroke-width="2">
+       			<circle cx="25" cy="25" r="23"></circle>
+       			<path d="M10 20 L25 35 L40 20"></path>
+   			</g>
+   		</svg>
+ 	</a>
+
+  	<div id="wrapper">
+  		<div class="content">
+  			<div id="experiments">
+  				<h2>I tend to create stuff, here are some of my <em><a href="experiment.html">experiments</a></em></h2>
+	
+				<div id='swiper' class='swipe'>
+          <div class='swipe-wrap'>
+					<!-- <a href="experiments/FlappyJS/FlappyJS.html">
+  						<img class="fit" src="images/graphics/Flappy Bird.png" alt="Flappy Bird"/>
+  					</a>
+            <div class="meta">
+  					 <h2><a href='experiments/FlappyJS/FlappyJS.html'> FlappyJS </a></h2>
+  					 <p> An Experiment in recreating the fantastic, yet slightly annoying, Flappy Bird by the awesome people over .GEARS Studios </p>
+            </div>
+  				</div> -->
+            <div class='swipe-experiment'>
+              <a href='experiments/FlappyJS/FlappyJS.html' target='_blank'><img class='fit' src='images/graphics/Flappy Bird.png' alt='Flappy Bird'/></a>
+              <div class='meta'>
+                <header>
+                  <a href='experiments/FlappyJS/FlappyJS.html' target='_blank'><h3>FlappyJS</h3></a>
+                </header>
+                <p class="lead">A simple clone of an annoying but fun game made by the awesome people at dotgear studios.</p>
+                <p class="info">Watch on <a href="https://www.youtube.com/watch?v=riUx2G75mas" target='_blank'>YouTube</a></p>
+              </div>
+            </div>
+            <div class='swipe-experiment'>
+              <a href='experiments/Asteroids/index.html' target='_blank'><img class='fit' src='images/graphics/asteroids.png' alt='Asteroids'/></a>
+              <div class='meta'>
+                <header>
+                  <a href='experiments/Asteroids/index.html' target='_blank'><h3>Asteroids</h3></a>
+                </header>
+                <p class="lead">This is an arcade classic. Released in 1982 it was one of the first games to use a vector graphics engine which allowed for good resolution at a low cost.</p>
+                <p class="info">Watch on <a href="https://www.youtube.com/watch?v=riUx2G75mas" target='_blank'>YouTube</a></p>
+              </div>
+            </div>
+            <div class='swipe-experiment'>
+              <a href='experiments/snake.html' target='_blank'><img class='fit' src='images/graphics/snake.png' alt='Flappy Bird'/></a>
+              <div class='meta'>
+                <header>
+                  <a href='experiments/snake.html' target='_blank'><h3>Snake</h3></a>
+                </header>
+                <p class="lead">This game originally released on nokia's in the late 1990's; it's casual and fun.</p>
+                <p class="info">Watch on <a href="https://www.youtube.com/watch?v=riUx2G75mas" target='_blank'>YouTube</a></p>
+              </div>
+            </div>
+            <div class='swipe-experiment'>
+              <a href='experiments/tictactoe.html' target='_blank'><img class='fit' src='images/graphics/tictactoe.png' alt='Flappy Bird'/></a>
+              <div class='meta'>
+                <header>
+                  <a href='experiments/tictactoe.html' target='_blank'><h3>Tic Tac Toe</h3></a>
+                </header>
+                <p class="lead">This game will challenge you with it's surprisingly complex AI.</p>
+                <p class="info">Watch on <a href="https://www.youtube.com/watch?v=riUx2G75mas" target='_blank'>YouTube</a></p>
+              </div>
+            </div>
+          </div>  
+        </div>
+
+        <div style='text-align:center;padding-top:20px;'>
+        <a class="swipe-ctrl active" onclick='swiper.slide(0)'></a>
+        <a class="swipe-ctrl" onclick='swiper.slide(1)'></a>
+        <a class="swipe-ctrl" onclick='swiper.slide(2)'></a>
+        <a class="swipe-ctrl" onclick='swiper.slide(3)'></a>
+        </div>
+
+      <script src='js/swiper.min.js'></script>
+      <script>
+      (function() {
+       window.swiper = Swipe(document.getElementById('swiper'), {
+          auto: 5000,
+          callback: function(idx) {
+            var el = document.getElementsByClassName('swipe-ctrl');
+            for (var i = 0; i < el.length; i++) {
+              el[i].className = "swipe-ctrl" + (i === idx ? " active" : "");
+            }
+          }
+       });
+      })();
+    </script>
+
+  					<hr style='clear: both;'/>
+
+            <br/>
+
+            <h2> Sometimes I write things on my <em><a href='blog.html'>blog</a></em>. </h2>
+
+  				<div class='post-big row'>	
+            <div class='crop'>
+              <a href='blog.html'>
+  					   <img src='images/graphics/Blog.png' alt='Blog Image'/>
+              </a>
+            </div>
+            <div class='meta'>
+              <header>
+  					   <h2><a href='blog.html'>My Blog</a></h2>
+                <p class="info">
+                  <time datetime="Sat May 13 2016 10:49:00 GMT+0200 (AEST)">14 May 2016 @ 10:49:00</time>
+                </p>
+              </header>
+  					 <p>I am currently in the Snowy mountains adding new features and functionality to my website.</p>
+            </div>
+  				</div>
+        </div>
+
+        <hr style='clear: both;'/>
+
+        <br/>
+
+        <div class='post-row row'>
+          <div class='post'>
+            <div class='crop'>
+              <img src='http://www.placehold.it/312x250' alt/>
+            </div>
+            <div class='meta'>
+              <header>
+                <h3 class='blog-header'><a href='syntax.html'>Syntax Highlighting</a></h3>
+                <p class='info'>
+                  <time datetime='Tue Jul 12 2016 17:26:00 GMT+1400 (PET)'>12 July 2016 @ 5:24pm</time>
+                </p>
+              </header>
+              <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, dicta. </p>
+            </div>
+          </div>
+          <div class='post'>
+            <div class='crop'>
+              <img src='http://www.placehold.it/312x250' alt/>
+            </div>
+            <div class='meta'>
+              <header>
+                <h3 class='blog-header'><a href='syntax.html'>Syntax Highlighting</a></h3>
+                <p class='info'>
+                  <time datetime='Tue Jul 12 2016 17:26:00 GMT+1400 (PET)'>12 July 2016 @ 5:24pm</time>
+                </p>
+              </header>
+              <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, dicta. </p>
+            </div>
+          </div>
+          <div class='post'>
+            <div class='crop'>
+              <img src='http://www.placehold.it/312x250' alt/>
+            </div>
+            <div class='meta'>
+              <header>
+                <h3 class='blog-header'><a href='syntax.html'>Syntax Highlighting</a></h3>
+                <p class='info'>
+                  <time datetime='Tue Jul 12 2016 17:26:00 GMT+1400 (PET)'>12 July 2016 @ 5:24pm</time>
+                </p>
+              </header>
+              <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, dicta. </p>
+            </div>
+          </div>
+        </div>
+
+        <hr style='clear: both;'/>
+
+      </div>
+
+  		<div id="contact">
+  			<div class="content">
+  				
+          <h2>Interested to know more about me? <em><a href="contact.html">Contact</a></em> me or <em><a href='Joke Resume.txt' download>download</a></em> my resumé.</h2>
+
+          <a href='mailto:theawesomew@gmail.com' target='_blank'>
+            <img src="images/svg/mail.svg" width="100"/>
+          </a>
+
+          <a href='Joke Resume.txt' download>
+            <img src="images/svg/resume.svg" width="100" alt/>
+          </a>
+
+  				<p style="color:#fff; font-size: 1.17em;">Follow me on some of my social media sites.</p>
+          
+          <a href='https://www.youtube.com/c/theawesomew' target='_blank'>
+            <img src="images/svg/youtube.svg" width="50" alt/>
+          </a>
+          <a href='https://twitter.com/theawesomew1808' target='_blank'/>
+            <img src="images/svg/twitter.svg" width="50" alt/>
+          </a>
+          <a href='https://github.com/theawesomew' target='_blank'>
+            <img src="images/svg/github.svg" width="50" alt/>
+          </a>
+  			</div>
+  		</div>
+  	<div class="top">
+  		<a href="#hero" data-scroll="true"> Back to the top </a>
+      <hr/>
+      <p>&copy; 2016 - William Kennedy</p>
+  	</div>
+    <script src='js/smoothScroll.min.js'></script>
+    <script>
+      smoothScroll.init();
+    </script>
+</body>
+</html>

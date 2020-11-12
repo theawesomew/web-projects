@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script>
+		var str = "123aa456", new_str = "";
+
+		for (var i = 0; i < str.length; i++) {
+			console.log(Number(str[i]));
+			if (Number(str[i]) === NaN) {
+				new_str += str[i];
+			}
+		}
+
+		console.log(str, new_str);
+	</script>
+</body>
+</html>

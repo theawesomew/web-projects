@@ -1,0 +1,248 @@
+<html>
+<head>
+	<title>Pong</title>
+</head>
+<style>
+	canvas {
+		position:absolute;
+		margin:auto;
+		top:0;
+		bottom:0;
+		right:0;
+		left:0;
+		outline:1px solid black;
+	}
+	h1 {
+		text-align: center;
+		font-family:  Courier New, sans-serif;
+	}
+</style>
+<body onload="init();">
+<h1>Sorry, you cannot rate our game. You can play pong though.</h1>
+<script>
+	var canvas = document.createElement('canvas');
+	canvas.width = 700;
+	canvas.height = 600;
+	var ctx = canvas.getContext('2d');
+	document.body.appendChild(canvas);
+
+	var States = {
+		Menu: 0,
+		Game: 1
+	};
+
+	var currentState = States.Menu;
+
+	var width = 700, height = 600, pi = Math.PI;
+	var UpArrow = 38, DownArrow = 40;
+
+	var keys = [];
+
+	window.addEventListener("keydown", function (e){
+		keys[e.keyCode] = true;
+	}, false);
+
+	window.addEventListener("keyup", function (e){
+		delete keys[e.keyCode];
+	}, false);
+
+	var player = {
+		x: null,
+		y: null,
+		width: 20,
+		height: 100,
+		score: 0,
+
+		update: function (){
+			if(keys[UpArrow]) this.y -= 7
+			if(keys[DownArrow]) this.y += 7;
+
+			if(this.y < 0){
+				this.y = 0;
+			}
+			if(this.y >= height - this.height){
+				this.y = height - this.height;
+			}
+		},
+		render: function (){
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	};
+
+	var ai = {
+		x: null,
+		y: null,
+		width: 20,
+		height: 100,
+		score: 0,
+
+		update: function (){
+			var desty = ball.y - (this.height - ball.side) * 0.1;
+			this.y += (desty - this.y) * 0.4;
+
+			if(this.y < 0){
+				this.y = 0;
+			}
+			if(this.y >= height - this.height){
+				this.y = height - this.height;
+			}
+		},
+		render: function (){
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	};
+
+	var ball = {
+		x: null,
+		y: null,
+		vel: null,
+		side: 20,
+		speed: 12,
+
+		update: function (){
+			this.x += this.vel.x;
+			this.y += this.vel.y;
+
+			if(0 > this.x + this.side){
+				ai.score++;
+
+				ball.x = (canvas.width - ball.side)/2;
+				ball.y = (canvas.height - ball.side)/2;
+
+				ball.vel = {
+					x: ball.speed,
+					y: 0
+				}
+			}
+
+			if(this.x > width){
+				player.score++;
+
+				ball.x = (canvas.width - ball.side)/2;
+				ball.y = (canvas.height - ball.side)/2;
+
+				ball.vel = {
+					x: ball.speed,
+					y: 0
+				}
+			}
+
+			if(0 > this.y || this.y + this.side > height){
+				var offset = this.vel.y < 0 ? 0 - this.y : height - (this.y + this.side);
+				this.y += 2 * offset;
+				this.vel.y *= -1;
+			}
+
+			var AABBIntersect = function (ax, ay, aw, ah, bx, by, bw, bh) {
+				return ax < bx + bw && ay < by + bh && bx < ax + aw && by < ay + ah;
+			};
+
+			var pdle = this.vel.x < 0 ? player : ai;
+			if(AABBIntersect(pdle.x, pdle.y, pdle.width, pdle.height, this.x, this.y, this.side, this.side)){
+				this.x = pdle === player ? player.x + player.width : ai.x - this.side;
+				var n = (this.y + this.side - pdle.y)/(pdle.height + this.side);
+				var phi = 0.25 * pi * (2 * n - 1);
+
+				var smash = Math.abs(phi) > 0.2 * pi ? 1.5 : 1;
+				this.vel.x = smash * (pdle === player ? 1 : -1) * this.speed * Math.cos(phi);
+				this.vel.y = smash * this.speed * Math.sin(phi);	
+			}
+		},
+		render: function (){
+			ctx.fillRect(this.x, this.y, this.side, this.side);
+		}
+	};
+
+	function main() {
+		run();
+	}
+
+	function run () {
+		var rf = (function (){
+			return 	window.requestAnimationFrame 		||
+					window.mozRequestAnimationFrame 	||
+					window.oRequestAnimationFrame 		||
+					window.msRequestAnimationFrame 		||
+					window.webkitRequestAnimationFrame 	||
+
+					function (cb, el) {
+					    window.setTimeout(cb, 1000/60);
+					}
+		})();
+
+		var loop = function () {
+			update();
+			render();
+
+			rf(loop, canvas);
+		}
+		rf(loop, canvas);
+	}
+
+	function init() {
+		player.x = 10;
+		player.y = (canvas.height - player.height)/2;
+
+		ai.x = 700 - 30;
+		ai.y = (canvas.height - ai.height)/2;
+
+		ball.x = (canvas.width - ball.side)/2;
+		ball.y = (canvas.height - ball.side)/2;
+
+		ball.vel = {
+			x: ball.speed, 
+			y: 0
+		}
+	}
+
+	function update() {
+
+		if(keys[32]){
+			currentState = States.Game;
+		}
+
+		if (currentState == States.Game){
+			player.update();
+			ai.update();
+			ball.update();
+		}
+	}
+
+	function render() {
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		if (currentState == States.Menu) {
+			ctx.save();
+			ctx.fillRect(0, 0, width, height);
+			ctx.fillStyle = "#fff";
+			ctx.font = "30px Courier New";
+			ctx.fillText("Push Space To Play", (width - 310)/2, (height - 20)/2);
+			ctx.restore();
+		}
+
+
+		if (currentState == States.Game){
+			ctx.save();
+			ctx.fillStyle = "#fff";
+
+			player.render();
+			ai.render();
+			ball.render();
+
+			var w = 4;
+			var x = (canvas.width - w) * 0.5;
+			var y = 0;
+			var step = canvas.height/15;
+			while(y < canvas.height){
+				ctx.fillRect(x, y + step * 0.25, w, step * 0.5);
+				y += step;
+			}
+
+			ctx.restore();
+		}
+	}
+
+	main();
+</script>
+</body>
+</html>

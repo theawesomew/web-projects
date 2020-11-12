@@ -1,0 +1,1 @@
+const WIDTH = HEIGHT = 600, TILE_SIZE = WIDTH / 8;

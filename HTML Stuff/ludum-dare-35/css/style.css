@@ -1,0 +1,10 @@
+canvas {
+	background: #000;
+	outline: 1px solid #000;
+	margin: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}

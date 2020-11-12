@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<style> canvas { outline: 1px solid #555; margin: auto; position: absolute; top: 0; bottom: 0; left: 0; right: 0;} </style>
+
+</head>
+<body>
+<script>
+	var canvas, ctx, width, height;
+
+	var frames = 0;
+
+	var p, px, py;
+
+	var antip = [];
+
+	var keys = [];
+
+	var initDir = (Math.round(Math.random() * 2) - 1);
+
+	initDir = initDir === 0 ? 1 : initDir;
+
+	var dir = [initDir, -initDir];
+
+	function MouseMove (evt) {
+		var el = evt.target;
+
+		px = evt.clientX - el.offsetLeft;
+		py = evt.clientY - el.offsetTop;
+	}
+
+	function player (x, y, colour) {
+		this.x = x;
+		this.y = y;
+		this.width = 20;
+		this.height = 20;
+		this.colour = colour;
+	}
+
+	function antiplayer (x, y, colour, velx, vely) {
+		this.x = x;
+		this.y = y;
+		this.width = 20;
+		this.height = 20;
+		this.velx = velx;
+		this.vely = vely;
+		this.colour = colour;
+	}
+
+	var AABBIntersect = function (ax, ay, aw, ah, bx, by, bw, bh) {
+		return ax < bx + bw && ay < by + bh && bx < ax + aw && by < ay + ah; 
+	}
+
+	function main () {
+		canvas = document.createElement('canvas');
+		canvas.width = width = 600;
+		canvas.height = height = 337;
+		ctx = canvas.getContext('2d');
+		document.body.appendChild(canvas);
+
+		canvas.addEventListener('mousemove', MouseMove);
+
+		canvas.style.cursor = 'none';
+
+		init();
+		run();
+	}
+
+	function run () {
+		var loop = function () {
+			update();
+			render();
+			window.requestAnimationFrame(loop, canvas);
+		}
+		window.requestAnimationFrame(loop, canvas);
+	}
+
+	function init () {
+		p = new player(10, 10, '#ff0');
+
+		for (var i = 0; i < 3; i++) {
+			antip.push(new antiplayer(Math.random() * width - 20, Math.random() * height - 20, '#00d', 6 * dir[0], 6 * dir[1]));
+		}
+	}
+
+	function update () {
+		frames++;
+
+		p.x = px;
+		p.y = py;
+
+		if (p.x < 0) {
+			p.x = 0;
+		}
+
+		if (p.y < 0) {
+			p.y = 0;
+		}
+
+		if (p.x >= width) {
+			p.x = width - p.width;
+		}
+
+		if (p.y >= height) {
+			p.y = height - p.height;
+		}
+
+		for (var i = 0, len = antip.length; i < len; i++) {
+			antip[i].x += antip[i].velx;
+			antip[i].y += antip[i].vely;
+
+			if (antip[i].y < 0) {
+				antip[i].vely *= -1;
+			}
+
+			if (antip[i].x >= width - 20) {
+				antip[i].velx *= -1;
+			}
+
+			if (antip[i].x < 0) {
+				antip[i].velx *= -1;
+			}
+
+			if (antip[i].y >= height - 20) {
+				antip[i].vely *= -1;
+			}
+
+			if (AABBIntersect(p.x, p.y, p.width, p.height, antip[i].x, antip[i].y, antip[i].width, antip[i].height)) {
+				antip = [];
+				frames = 0;
+				return init();
+			}
+		}
+
+		if (frames % 300 == 0) {
+			antip.push(new antiplayer(Math.random() * width - 20, Math.random() * height - 20, '#00d', 6 * dir[0], 6 * dir[1]))
+		} 
+	}
+
+	function render () {
+		ctx.clearRect(0, 0, width, height);
+
+		ctx.fillStyle = p.colour;
+		ctx.fillRect(p.x, p.y, p.width, p.height);
+
+		for (var i = 0, len = antip.length; i < len; i++) {
+			ctx.fillStyle = antip[i].colour;
+			ctx.fillRect(antip[i].x, antip[i].y, antip[i].width, antip[i].height);
+		}
+
+		ctx.fillStyle = 'black';
+		ctx.fillText('Seconds: ' + (frames/60).toFixed(1), 10, 10);
+	}
+
+	main();
+</script>
+</body>
+</html>

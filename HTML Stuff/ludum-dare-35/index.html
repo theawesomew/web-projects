@@ -1,0 +1,231 @@
+<html lang="en">
+<head>
+	<meta charse="UTF-8"/>
+	<title></title>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<script src="js/lib/class.js"></script>
+	<script src="js/canvas.js"></script>
+	<script src="js/input.js"></script>
+	<script src="js/player.js"></script>
+	<script src="js/bullet.js"></script>
+	<script src="js/enemy.js"></script>
+</head>
+<body>
+<script>
+	var canvas, input, bullets, aliens, player, lvl, lives, frames = 0, aliensKilled = 0, alienSpeed;
+
+	var States = {
+		MENU: 0,
+		GAME: 1,
+		SCORE: 2
+	}
+
+	var currentState = States.MENU ;
+
+	var score = 0;
+
+	var colour = '#ff0000';
+
+	function main () {
+		canvas = new Canvas(600, 337);
+		input = new InputHandeler();
+
+		init();
+		run();
+	}
+
+	function init () {
+		lvl = 0;
+		lives = 3;
+		bullets = [];
+		aliens = [];
+		player = new Player(300, 337 - 45);
+		alienSpeed = 3 + lvl;
+	}
+
+	function generateLvl () {
+		lvl = 0;
+		bullets = [];
+		aliens = [];
+		player = new Player(300, 337 - 45);
+		alienSpeed = 3 + lvl;
+	}
+
+	function run () {
+		var rf = (function (){
+			return window.requestAnimationFrame ||
+				   window.mozRequestAnimationFrame ||
+				   window.oRequestAnimationFrame ||
+				   window.msRequestAnimationFrame ||
+				   window.webkitRequestAnimationFrame ||
+
+			   		function (cb, el) {
+			   			window.setTimeout(cb, 1000/60);
+			   		}
+		})();
+
+		var loop = function () {
+			update();
+			render();
+
+			rf(loop, canvas)
+		}
+		rf(loop, canvas);	
+	}
+
+	function update () {
+		if (currentState === States.GAME) {
+			frames++;
+
+			if (frames % 50 == 0) {
+				aliens.push(new Enemy(Math.random() * 600, 0, alienSpeed));
+			}
+
+			if (input.isDown(37)) {
+				player.vel.x = -7;
+			} else if (input.isDown(39)) {
+				player.vel.x = 7;
+			} else {
+				player.vel.x = 0;
+			}
+
+			if (input.isPressed(32)) {
+				bullets.push(new Bullet(player.x + player.width/2, player.y, -10, 2, 6, colour));
+			}
+
+			if (frames % 100 == 0) {
+				player.width = 20;
+				player.height = 40;
+			} else if (frames % 150 == 0) {
+				player.width = 15;
+				player.height = 40;
+			} else if (frames % 250 == 0) {
+				player.width = 40;
+				player.height = 40;
+			}
+
+			player.update();
+
+			if (frames % 145 == 0) {
+				colour = '#ff0000';
+			} else if (frames % 215 == 0) {
+				colour = '#ffff00';
+			} else if (frames % 245 == 0) {
+				colour = '#ee7600';
+			} else if (frames % 315 == 0) {
+				colour = '#0000ff';
+			} else if (frames % 345 == 0) {
+				colour = '#4b0082';
+			} else if (frames % 415 == 0) {
+				colour = '#551a8b';
+			}
+
+			for (var i = 0, len = bullets.length; i < len; i++) {
+				var b = bullets[i];
+				b.update();
+
+				if (frames % 100 == 0) {
+					b.width = 2;
+					b.height = 30;
+				} else if (frames % 150 == 0) {
+					b.width = 7;
+					b.height = 6;
+				}
+
+				if (b.shallRemove) {
+					bullets.splice(i, 1);
+					i--;
+					len--;
+					continue;
+				}
+
+				for (j = 0, len2 = aliens.length; j < len2; j++) {
+					var a = aliens[j];
+
+					if(AABBIntersect(b.x, b.y, b.width, b.height, a.x, a.y, a.width, a.height)) {
+						aliens.splice(j, 1);
+						j--;
+						len2--;
+						bullets.splice(i, 1);
+						i--;
+						len--;
+
+						score++;
+					}
+				}
+			}
+
+			for (var i = 0, len = aliens.length; i < len; i++) {
+				var a = aliens[i];
+				a.update();
+
+				if (AABBIntersect(player.x, player.y, player.width, player.height, a.x, a.y, a.width, a.height)) {
+					lives--;
+					return generateLvl();
+				}
+			}
+
+			if (lives === 0) {
+				currentState = States.SCORE;
+			}
+		}
+
+		if (currentState === States.MENU) {
+			if (input.isPressed(32)) {
+				lives = 3;
+				currentState = States.GAME;
+			}
+		}
+
+		if (currentState === States.SCORE) {
+			if (input.isPressed(32)) {
+				currentState = States.MENU;
+			}
+		}
+	}
+
+	function render () {
+		canvas.ctx.strokeStyle = '#fff';
+		
+		if (currentState === States.GAME) {
+			canvas.clear();
+			player.render(canvas.ctx);
+
+			for (var i = 0; i < bullets.length; i++) {
+				bullets[i].render(canvas.ctx);
+			}
+
+			for (var i = 0; i < aliens.length; i++) {
+				aliens[i].render(canvas.ctx);
+			}
+		}
+
+		if (currentState === States.MENU) {
+			canvas.clear();
+			canvas.ctx.strokeStyle = '#fff';
+			canvas.ctx.font = '18px Courier New';
+			canvas.ctx.fillText('Press Space To Continue', 600/2 - 120, 337/2);
+		}
+
+		if (currentState === States.SCORE) {
+			canvas.clear();
+			canvas.ctx.strokeStyle = '#fff';
+			canvas.ctx.font = '24px Courier New';
+			canvas.ctx.fillText('Game Over', 600/2 - 60, 337/2);
+			canvas.ctx.font = '18px Courier New';
+			canvas.ctx.fillText('Press Space To Continue', 600/2 - 120, 337/2 + 30);
+			canvas.ctx.font = '18px Courier New';
+			canvas.ctx.fillText('Your Score Was: ' + score, 600/2 - 120, 337/2 + 60);
+		}
+	}
+
+	function AABBIntersect (ax, ay, aw, ah, bx, by, bw, bh) {
+		return ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah;
+	}
+
+	main();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script>
+	var data = [52, 58, 58, 60, 62, 62, 62, 66, 66, 66, 68, 68, 72, 76, 78, 80, 82, 82, 84, 86];
+	
+	for (var i = 0; i < data.length; i++) {
+		for (var j = 0; j < data.length; j++) {
+			if (data[j] - (data[j]-data[i])/2 === 70) {
+				console.log(data[i], data[j]);
+			}
+		}
+	}
+</script>
+</body>
+</html>

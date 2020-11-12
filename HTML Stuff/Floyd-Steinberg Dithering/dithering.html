@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style>
+		canvas {
+			outline: 1px solid black;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		var canvas = document.createElement("canvas"),
+		ctx = canvas.getContext("2d");
+
+		var img = new Image();
+		img.src = "cat.jpg";
+		img.onload = function () {
+			canvas.width = 2 * this.width;
+			canvas.height = this.height;
+
+			ctx.drawImage(this,0,0,this.width,this.height);
+			this.crossOrigin = 'Anonymous';
+
+			var imgData = ctx.getImageData(0,0,this.width,this.height);
+		}
+
+		document.body.appendChild(canvas);
+
+		function index (x,y) {
+			return x * 4 + (y * 512 * 4);
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+    <script src="js/constants.js"></script>
+    <script src="js/sprite.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/pawn.js"></script>
+    <script src="js/rook.js"></script>
+    <script src="js/knight.js"></script>
+    <script src="js/bishop.js"></script>
+    <script src="js/king.js"></script>
+    <script src="js/queen.js"></script>
+    <script src="js/empty.js"></script>
+    <script src="js/board.js"></script>
+    <script>
+        const canvas = new Canvas(WIDTH,HEIGHT);
+        const b = new Board(WIDTH);
+        let img = new Image();
+        img.onload = function () {
+            initSprites(img);
+            run();
+        }
+        img.src = "images/sprites-removebg-preview (3).png";
+        function run () {
+            canvas.animate(function () {
+                b.render(canvas.ctx);
+                //console.log("function is working")
+            });
+        }
+    </script>
+</body>
+</html>

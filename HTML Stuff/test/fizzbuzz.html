@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script>
+		function checkArray (x,y) {
+			for (var i = 0; i < x.length; i++) {
+				for (var j = 0; j < y.length; j++) {
+					if (x[i] === y[j]) {
+						return [i,j];
+					}
+				}
+			}
+
+			return false;
+		}
+
+		function findPath (a,b) {
+			var pathone = [], pathtwo = [], layers = 0, found = false;
+			pathone.push([a])
+			pathtwo.push([b])
+
+			if (a === b) {
+				return [a,b];
+			}
+
+			while (layers < 4) {
+				pathone.push([]);
+				pathtwo.push([]);
+				for (var i = 0; i < power(2,layers); i++) {
+					pathone[layers+1].push(pathone[layers][i]+1)
+					pathone[layers+1].push(pathone[layers][i]*2)
+					pathtwo[layers+1].push(pathtwo[layers][i]+1)
+					pathtwo[layers+1].push(pathtwo[layers][i]*2)
+					if (checkArray(pathone[layers+1],pathtwo[layers+1])!==false) {
+						return checkArray(pathone[layers+1],pathtwo[layers+1])
+					} 
+				}
+				layers++;
+			}
+		}
+
+		function power (a,b) {
+			var result = 1;
+			for (var i = 0; i < b; i++) {
+				result *= a;
+			}
+			return result;
+		} 
+
+		console.log(findPath(1,2));
+	</script>
+</body>
+</html>

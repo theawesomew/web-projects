@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test</title>
+</head>
+<body>
+<script>
+	
+var canvas = document.createElement("canvas");
+canvas.width = 500;
+canvas.height = 500;
+
+var ctx = canvas.getContext("2d");
+
+document.body.appendChild(canvas);
+
+var map = "" +
+"########################################"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"#......................................#"+
+"########################################".split();
+
+var p = {
+	x: 40,
+	y: 40,
+	w: 10,
+	h: 10,
+	w2: 5,
+	h2: 5
+}
+var dx = 0, dy = 0;
+document.onkeydown = function(evt) {
+	switch (evt.keyCode) {
+		case 37:
+			dx = -5;
+			break;
+		case 38:
+			dy = -5;
+			break;
+		case 39:
+			dx = 5;
+			break;
+		case 40:
+			dy = 5;
+			break;
+	}
+}
+document.onkeyup = function(evt) {
+	switch (evt.keyCode) {
+		case 37:
+			dx = 0;
+			break;
+		case 38:
+			dy = 0;
+			break;
+		case 39:
+			dx =0;
+			break;
+		case 40:
+			dy =0;
+			break;
+	}
+}
+
+var loop = function () {
+
+	var tx = dx > 0 ? p.x + p.w2 - 1 : p.x - p.w2;
+
+	var cur = Math.floor(tx/20);
+	var tar = Math.floor((tx + dx)/20);
+	
+	var ymin = Math.floor((p.y - p.h2)/ 20);
+	var ymax = Math.ceil((p.y + p.h2)/ 20);
+
+	if (cur < tar) {
+		for (var y = ymin; y < ymax; y++) {
+			for (var x = cur; x <= tar; x++) {
+				if (map[x + y*10] === "#") {
+					dx = x*20 - p.x - p.w2;
+					break;
+				}
+			}
+		}
+	} else if (cur > tar) {
+		for (var y = ymin; y < ymax; y++) {
+			for (var x = cur; x >= tar; x--) {
+				if (map[x + y*10] === "#") {
+					dx = x*20 - p.x + p.w2 + 20;
+					break;
+				}
+			}
+		}
+	}
+
+	var ty = dy > 0 ? p.y + p.h2 - 1 : p.y - p.h2;
+
+	var cur = Math.floor(ty/20);
+	var tar = Math.floor((ty + dy)/20);
+	
+	var xmin = Math.floor((p.x - p.w2)/ 20);
+	var xmax = Math.ceil((p.x + p.w2)/ 20);
+
+	if (cur > tar) {
+
+		for (var y = cur; y >= tar; y--) {
+			for (var x = xmin; x < xmax; x++) {
+				if (map[x + y*10] === "#") {
+					dy = y*20 - p.y + p.h2 + 20;
+					break;
+				}
+			}
+		}
+
+	} else {
+
+		for (var y = cur; y <= tar; y++) {
+			for (var x = xmin; x < xmax; x++) {
+				if (map[x + y*10] === "#") {
+					dy = y*20 - p.y - p.h2;
+					break;
+				}
+			}
+		}
+
+	}
+
+
+	p.x += dx;
+	p.y += dy;
+
+	for (var i = 0; i < 100; i++) {
+		var m = map[i];
+		ctx.fillStyle = m === "#" ? "#000" : "#fff";
+		var x = i % 10;
+		var y = (i / 10)|0;
+		ctx.fillRect(x*20, y*20, 20, 20);
+	}
+	ctx.fillStyle = "#f00";
+	ctx.fillRect(p.x-p.w2, p.y-p.h2, p.w, p.h);
+
+	window.requestAnimationFrame(loop);
+}
+loop();
+
+
+</script>
+</body>
+</html>

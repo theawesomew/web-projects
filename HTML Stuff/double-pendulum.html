@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Double Pendulum</title>
+	<style>
+		canvas {
+			outline: 1px solid black;
+			margin: auto;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		var canvas, ctx, width, height,
+		canvas2, ctx2;
+		p1 = {
+			x: null,
+			y: null,
+			angle: Math.PI/2,
+			angle_v: 0,
+			angle_a: 0,
+			length: 100,
+			mass: 100
+		},
+		p2 = {
+			x: null,
+			y: null,
+			angle: Math.PI/2,
+			angle_v: 0,
+			angle_a: 0,
+			length: 100,
+			mass: 100
+		},
+
+		g = 1;
+
+		function main () {
+			canvas = document.createElement("canvas");
+			canvas2 = document.createElement("canvas");
+			width = canvas.width = canvas2.width = 600;
+			height = canvas.height = canvas2.height = 400;
+			ctx = canvas.getContext('2d');
+			ctx2 = canvas2.getContext('2d')
+			document.body.appendChild(canvas2);
+			document.body.appendChild(canvas);
+
+			loop();
+		}
+
+		function loop () {
+			var loop = function () {
+				update();
+				draw();
+				window.requestAnimationFrame(loop,canvas);
+			}
+			window.requestAnimationFrame(loop,canvas);
+		}
+
+		function update () {
+			p1.angle_a = (-g*(2*p1.mass+p2.mass)*Math.sin(p1.angle)-p2.mass*g*Math.sin(p1.angle-p2.angle)-2*Math.sin(p1.angle-p2.angle)*p2.mass*(p2.angle_v*p2.angle_v*p2.length+p1.angle_v*p1.angle_v*Math.cos(p1.angle-p2.angle)))/(p1.length*(2*p1.mass+p2.mass-p2.mass*Math.cos(2*p1.angle-2*p2.angle)));
+			p2.angle_a = (2*Math.sin(p1.angle-p2.angle)*(p1.angle_v*p1.angle_v*p1.length*(p1.mass+p2.mass)+g*(p1.mass+p2.mass)*Math.cos(p1.angle)+p2.angle_v*p2.angle_v*p2.length*p2.mass*Math.cos(p1.angle-p2.angle)))/(p2.length*(2*p1.mass+p2.mass-p2.mass*Math.cos(2*p1.angle-2*p2.angle)));
+
+			p1.angle_v += p1.angle_a;
+			p1.angle += p1.angle_v;
+
+			p2.angle_v += p2.angle_a;
+			p2.angle += p2.angle_v;
+
+			p1.angle_v *= 0.999;
+			p2.angle_v *= 0.999;
+
+			p1.x = p1.length * Math.sin(p1.angle);
+			p1.y = p1.length * Math.cos(p1.angle);
+
+			p2.x = p1.x + p2.length * Math.sin(p2.angle);
+			p2.y = p1.y + p2.length * Math.cos(p2.angle);
+		}
+
+		function draw () {
+			ctx.clearRect(0,0,width,height);
+
+			ctx.save();
+			ctx2.save();
+
+			ctx.translate(300,200);
+			ctx2.translate(300,200);
+
+			ctx.strokeStyle = 'cornflowerblue';
+			ctx.lineWidth = 7;
+			ctx.beginPath();
+			ctx.moveTo(0,0);
+			ctx.lineTo(p1.x,p1.y);
+			ctx.moveTo(p1.x,p1.y);
+			ctx.lineTo(p2.x,p2.y);
+			ctx.stroke();
+
+			ctx2.beginPath();
+			ctx2.arc(p2.x,p2.y,1,0,2*Math.PI);
+			ctx2.fill();
+
+			ctx.restore();
+			ctx2.restore();
+		}
+
+		main();
+	</script>
+</body>
+</html>

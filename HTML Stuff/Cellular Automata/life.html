@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Conway's Game of Life</title>
+	<style>
+		canvas {
+			outline: 2px solid #888;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	</style>
+</head>
+<body>
+	Trail: <input type='checkbox' onchange='followPath = followPath === true ? false : true'/>
+	<script src='helper.js'></script>
+	<script>
+
+		var canvas, canvas2, ctx, ctx2, width, height, cols = 32, rows = 24, start = false, down = [], 
+		pressed = [],
+
+		followPath = false,
+
+		states = {
+			dead: 0,
+			alive: 1,
+			pathway: 2
+		},
+
+		currentGrid = new createGrid(),
+		nextGrid = new createGrid(),
+		pathGrid = new createGrid();
+
+		window.addEventListener('mousedown', onpress);
+
+		window.addEventListener('keydown', function (e) {
+			down[e.keyCode] = true;
+		}, false);
+
+		window.addEventListener('keyup', function (e) {
+			delete down[e.keyCode];
+			delete pressed[e.keyCode];
+		}, false);
+
+		function isDown (key) {
+			return down[key];
+		}
+
+		function isPressed (key) {
+			if (pressed[key]) {
+				return false;
+			} else if (down[key]) {
+				return pressed[key] = true;
+			} else {
+				return false;
+			}
+		}
+
+		function main () {
+			canvas = document.createElement('canvas');
+			canvas2 = document.createElement('canvas');
+			width = canvas.width = canvas2.width = 640;
+			height = canvas.height = canvas2.height = 480;
+			ctx = canvas.getContext('2d');
+			ctx2 = canvas2.getContext('2d');
+			document.body.appendChild(canvas2);
+			document.body.appendChild(canvas);
+
+			init();
+			run();
+		}
+
+		function init () {
+			drawAxis();
+			currentGrid.init(states.dead, cols, rows);
+			nextGrid.init(states.dead, cols, rows);
+			pathGrid.init(states.dead, cols, rows);
+		}
+
+		function drawAxis () {
+			ctx.strokeStyle = '#888';
+			ctx.beginPath();
+			for (var x = 1; x < cols; x++) {
+				ctx.moveTo(20*x, 0);
+				ctx.lineTo(20*x, height);	
+			}
+
+			for (var y = 1; y < rows; y++) {
+				ctx.moveTo(0, 20*y);
+				ctx.lineTo(width, 20*y);
+			}
+			ctx.stroke();
+		}
+
+		function onpress (evt) {
+			var el = evt.target;
+
+			if (el === canvas) {
+				var px = evt.clientX - el.offsetLeft;
+				var py = evt.clientY - el.offsetTop;
+
+				if (px % 20 >= 0 && py % 20 >= 0) {
+					var x = Math.floor(px/20);
+					var y = Math.floor(py/20);
+
+					if (currentGrid.get(x,y) === states.dead) {
+						currentGrid.set(states.alive, x, y);
+					} else {
+						currentGrid.set(states.dead, x, y);
+					}
+				}
+			}
+		}
+
+		function run () {
+			setInterval(function (){
+				update();
+				render();
+			}, 100)
+		}
+
+		function update () {
+			if (!start) { 
+				if (isPressed(32)) { 
+					start = true 
+				} else if (isPressed(13)) {					
+					currentGrid.init(states.dead, cols, rows);
+					nextGrid.init(states.dead, cols, rows);
+					pathGrid.init(states.dead, cols, rows);
+				} 
+			}
+
+			if (start) {
+				for (var x = 0; x < cols; x++) {
+					for (var y = 0; y < rows; y++) {
+						switch (currentGrid.get(x,y)) {
+							case states.alive:
+								if (currentGrid.checkSurround(x,y) < 2) {
+									nextGrid.set(states.dead, x, y);
+									pathGrid.set(states.pathway, x, y);
+								} else if (currentGrid.checkSurround(x,y) == 2 ||
+									currentGrid.checkSurround(x,y) == 3) {
+									nextGrid.set(states.alive, x, y);
+								} else {
+									nextGrid.set(states.dead, x, y);
+									pathGrid.set(states.pathway, x, y);
+								}
+							break;
+
+							case states.dead:
+								if (currentGrid.checkSurround(x,y) === 3) {
+									nextGrid.set(states.alive, x, y);
+								} else {
+									nextGrid.set(states.dead, x, y);
+								}
+							break;
+						}
+					}
+				}
+
+				currentGrid.grid = nextGrid.grid;
+				nextGrid.init(states.dead, cols, rows);
+
+				if (isPressed(32)) { start = false }
+			}
+
+			console.log(start);
+		}
+
+		function render () {
+			for (var x = 0; x < cols; x++) {
+				for (var y = 0; y < rows; y++) {
+					switch (currentGrid.get(x,y)) {
+						case states.dead:
+							ctx.clearRect(x * 20 + 1, y * 20 + 1, 18, 18);
+							ctx.fillStyle = 'rgba(0,0,0,0)';
+							break;
+						case states.alive:
+							ctx.fillStyle = '#4286f4';
+							break;
+					}
+
+					switch (pathGrid.get(x,y)) {
+						case states.dead:
+							ctx2.fillStyle = "#fff";
+							break;
+						case states.pathway:
+							ctx2.fillStyle = "lightblue";
+							break;
+					}
+
+					ctx.fillRect(x * 20 + 1, y * 20 + 1, 18, 18);
+					if (followPath) {
+						ctx2.fillRect(x * 20 + 1, y * 20 + 1, 18, 18);
+					} else {
+						ctx2.clearRect(x * 20 + 1, y * 20 + 1, 18, 18);
+					}
+				}
+			}
+		}
+
+		main();
+	</script>
+</body>
+</html>

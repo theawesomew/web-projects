@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<title>Test</title>
+	<style>
+		canvas {
+			background: black;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	</style>
+</head>
+<body>
+<script>
+	var points = [-4,-2,-2,-4,0,-2,2,-4,4,-2,3,0,4,2,1,4,-2,4,-4,2,-4,-2],
+		canvas = document.createElement('canvas'),
+		ctx = canvas.getContext('2d');
+
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+
+	var w = Math.round(canvas.width * 0.5),
+		h = Math.round(canvas.height * 0.5);
+		
+	document.body.appendChild(canvas);
+
+	var keys = [];
+
+	var time = 0;
+
+	window.addEventListener('keydown', function (evt){
+		keys[evt.keyCode] = true;
+	}, false);
+
+	window.addEventListener('keyup', function (evt){
+		delete keys[evt.keyCode];
+	}, false);
+
+	var x = 0, y = 0;
+
+	document.onmousemove = function (evt) {
+		x = evt.pageX - canvas.offsetLeft;
+		y = evt.pageY - canvas.offsetTop;
+	}
+
+	function scale (p, scale) {
+		for (var i = 0, len = p.length; i < len; i += 2) {
+			p[i] = p[i] *= scale;
+			p[i + 1] = p[i + 1] *= scale;
+		}
+	}
+
+	scale(points, 25);
+
+	function hasPoint (p, ox, oy, x, y) {
+		var c = false;
+		var len = p.length;
+		for (var i = 0, j = len - 2; i < len; i += 2) {
+			var px1 = p[i] + ox, px2 = p[j] + ox,
+				py1 = p[i + 1] + oy, py2 = p[j + 1] + oy;
+
+			if ((py1 > y != py2 > y) && (x < (px2 - px1) * (y - py1) / (py2 - py1) + px1)) {
+				c = !c;
+			}
+			j = i;
+		}
+		return c;
+	}
+
+	function rotate(p, theta) {
+		var c = Math.cos(theta);
+		var s = Math.sin(theta);
+
+		for (var i = 0, len = p.length; i < len; i += 2) {
+			var _x = p[i];
+			var _y = p[i + 1];
+
+			p[i] = _x * c - _y * s;
+			p[i + 1] = _x * s + _y * c;
+		}
+	}
+
+	function loop () {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.strokeStyle = hasPoint(points, w, h, x, y) ? 'darkblue' : 'white';
+		ctx.lineWidth = 4;
+		var r = hasPoint(points, w, h, x, y) ? -0.01 : 0;
+		ctx.save();
+		ctx.beginPath();
+		for (var i = 0, len = points.length; i < len; i += 2) {
+			if (i === 0) {
+				ctx.moveTo(points[i] + w, points[i + 1] + h);
+			} else {
+				ctx.lineTo(points[i] + w, points[i + 1] + h);
+			}
+		} 
+		ctx.stroke();
+		ctx.restore();
+
+		rotate(points, r);
+
+		window.requestAnimationFrame(loop, canvas);
+	}
+	window.requestAnimationFrame(loop, canvas);
+</script>
+</body>
+</html>

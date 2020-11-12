@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel='stylesheet' type='text/css' href='css/styles.css'/>
+</head>
+<body>
+	<script src='js/helper.js'></script>
+	<script>
+		var canvas, ctx, width, height, ring, pr, r;
+
+		var player = {
+			radius: 10,
+			dir: 1,
+			speed: 0.5,
+
+			update: function () {
+				this.radius += this.speed * this.dir;
+
+				if (this.radius < 5) {
+					this.dir *= -1;
+				}
+			},
+
+			draw: function (ctx) {
+				var player_ring = new Ring(width/2,height/2,this.radius,2,"black")
+				player_ring.draw(ctx);
+			}
+		}
+
+		var counter = 0;
+		var keys = [];
+		var pressed = [];
+
+		window.addEventListener("keydown", function (e){
+			keys[e.keyCode] = true;
+		}, false);
+
+		window.addEventListener("keyup", function (e){
+			delete keys[e.keyCode];
+			delete pressed[e.keyCode];
+		}, false);
+
+		function isPressed (code) {
+			if (this.pressed[code]) {
+				return false;
+			} else if (this.keys[code]) {
+				return this.pressed[code] = true;
+			} else {
+				return false;
+			}
+		}
+
+		function main () {
+			canvas = document.createElement("canvas");
+			width = canvas.width = 320;
+			height = canvas.height = 480;
+			ctx = canvas.getContext("2d");
+			document.body.appendChild(canvas);
+			
+			init();
+		}
+		function init () {
+			pr = 100;
+			r = 20 + Math.round(Math.random() * (pr-20)); 
+			ring = new Ring(width/2, height/2, r, 20, "cornflowerblue");
+
+			var loop = function () {
+				update();
+				render();
+				window.requestAnimationFrame(loop);
+			}
+			window.requestAnimationFrame(loop);
+		}
+
+		function update () {
+			player.update();
+
+			if (isPressed(32)) {
+				player.dir *= -1;
+				if (player.radius < ring.radius && player.radius > ring.radius - ring.lWidth) {
+
+					pr = 0;
+					pr += r;
+					r = 0;
+					if (counter % 2 === 0) {
+						r = pr + Math.round(Math.random() * 50)
+					} else {
+						r = 20 + Math.round(Math.random() * (pr-20));
+					}
+					counter++;
+					//console.log(pr, r, counter);
+					ring = new Ring(width/2, height/2, r, 20, "cornflowerblue");
+				}
+			}
+		}
+
+		function render () {
+			ctx.clearRect(0, 0, width, height);
+			ring.draw(ctx);
+			player.draw(ctx);
+		}
+
+		main();
+	</script>
+</body>
+</html>

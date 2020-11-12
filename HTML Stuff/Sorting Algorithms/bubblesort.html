@@ -1,0 +1,99 @@
+<html>
+<head>
+	<title></title>
+  	<style>
+  		canvas {
+			background: black;
+			outline: 1px solid black;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;	
+		}
+	</style>
+</head>
+<body>
+<script>
+	var canvas, ctx, width, height, array;
+
+	var array = [], states = [];
+
+	var c_width = 4;
+
+	// 60 x 20 = 1200
+
+
+	for (var i = 0; i < Math.round(1200/4); i++) {
+		array.push(Math.random() * 10 + 1);
+		states.push(0);
+	}
+
+	async function swap (arr, a, b) {
+		states[a] = -1;
+		states[b] = -2;
+		await sleep(25);
+
+		var c = arr[a];
+		arr[a] = arr[b];
+		arr[b] = c;
+		states[a] = 0;
+		states[b] = 0;
+	}	
+
+	async function bubbleSort (arr) {
+		let n = arr.length;
+		let swapped;
+		do {
+			swapped = false;
+			for (var i = 0; i < n; i++) {
+				if (arr[i+1] < arr[i]) {
+					await swap(arr, i, i+1);
+					swapped = true;
+				}
+			}
+			n = n - 1;		
+		} while (swapped);
+	}
+
+	function sleep (ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	function main () {
+		canvas = document.createElement("canvas");
+		width = canvas.width = window.innerWidth;
+		height = canvas.height = window.innerHeight;
+		ctx = canvas.getContext("2d");
+		document.body.appendChild(canvas);
+
+		bubbleSort(array);
+	}
+
+	function render () {
+		ctx.clearRect(0, 0, width, height);
+		ctx.fillStyle = "white";
+		ctx.fillRect(0, height - 20, width, 20);
+		let offset = (width - array.length * c_width)/2;
+		for (var i = 0; i < array.length; i++) {
+			if (states[i] == -1) {
+				ctx.fillStyle = "lightgreen";
+			} else if (states[i] == -2) {
+				ctx.fillStyle = "cornflowerblue";
+			} else {
+				ctx.fillStyle = "white";
+			}
+			ctx.fillRect(i * c_width + offset, height - array[i] * 40 - 20, c_width, 40 * array[i]);
+		}
+	}
+
+
+	main();	
+
+	setInterval(function () {
+		render();
+	}, 1000/60);
+</script>
+</body>
+</html>
